@@ -221,6 +221,49 @@ namespace Com.Bateeq.Service.Pos.Test.Controller.BateeqshopControllers
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
 
         }
-		 
+
+		[Fact]
+		public void GetReportCustomerByOrder()
+		{
+			//Setup
+			PosDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+			Mock<IServiceProvider> serviceProvider = GetServiceProvider();
+			var validateService = new Mock<IValidateService>();
+			Mock<IIdentityService> identityService = new Mock<IIdentityService>();
+
+			CustomerService service = new CustomerService(serviceProvider.Object, _dbContext("test"));
+
+			serviceProvider.Setup(s => s.GetService(typeof(CustomerService))).Returns(service);
+			serviceProvider.Setup(s => s.GetService(typeof(PosDbContext))).Returns(dbContext);
+
+
+			//Act
+			IActionResult response = GetController(identityService.Object, validateService.Object, service).GetReportCustomerByOrder("", "", "", 0, 0);
+
+			int statusCode = this.GetStatusCode(response);
+			Assert.NotEqual((int)HttpStatusCode.NotFound, statusCode);
+		}
+		[Fact]
+		public async Task GetExcelCustomerByOrder()
+		{
+			PosDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+			Mock<IServiceProvider> serviceProvider = GetServiceProvider();
+			var validateService = new Mock<IValidateService>();
+			Mock<IIdentityService> identityService = new Mock<IIdentityService>();
+
+			CustomerService service = new CustomerService(serviceProvider.Object, _dbContext("test"));
+
+			serviceProvider.Setup(s => s.GetService(typeof(CustomerService))).Returns(service);
+			serviceProvider.Setup(s => s.GetService(typeof(PosDbContext))).Returns(dbContext);
+
+
+			//Act
+			IActionResult response = GetController(identityService.Object, validateService.Object, service).GetExcelCustomerByOrder("","","PENDING", 0, 225000);
+
+
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
+
+		}
+
 	}
 }

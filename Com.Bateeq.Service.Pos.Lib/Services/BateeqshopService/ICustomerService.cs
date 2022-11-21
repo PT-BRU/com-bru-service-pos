@@ -14,6 +14,8 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService
         IQueryable<AddressBookViewModel> ReadAddressById(int id);
         IQueryable<OrderViewModel> ReadOrderByUserId(int id);
         MemoryStream GenerateExcel(string email, string name, string phoneNumber, string dobFrom, string dobTo, string membershipTier);
+        IQueryable<CustomerByOrderViewModel> ReadCustomerByOrder(string startOrder, string endOrder, string orderStatus, decimal totalOrderFrom, decimal totalOrderTo);
+        MemoryStream GenerateExcelCustomerByOrder(string starOrder, string endOrder, string orderState, decimal totalOrderFrom, decimal totalOrderTo);
         IQueryable<MembershipViewModel> ReadMembership();
     }
 }

@@ -206,7 +206,66 @@ namespace Com.Bateeq.Service.Pos.WebApi.Controllers.v1.BateeqshopControllers
             }
 
         }
+        [HttpGet("reportCustomer")]
+        public IActionResult GetReportCustomerByOrder(string startOrder, string endOrder,string orderStatus, decimal totalOrderFrom, decimal totalOrderTo)
+        {
+            try
+            {
+                VerifyUser();
+                var read = Service.ReadCustomerByOrder(startOrder,endOrder, orderStatus, totalOrderFrom, totalOrderTo);
 
+                List<CustomerByOrderViewModel> listData = new List<CustomerByOrderViewModel>();
+                listData = read.ToList();
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = listData,
+                    info = new Dictionary<string, object>
+                    {
+                        { "count", listData.Count },
+                        { "total", read.Count() }
+
+                    },
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+
+        }
+        [HttpGet("reportCustomer/download")]
+        public IActionResult GetExcelCustomerByOrder(string startOrder, string endOrder, string orderStatus, decimal totalOrderFrom, decimal totalOrderTo)
+        {
+            try
+            {
+                VerifyUser();
+                byte[] xlsInBytes;
+                int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                string accept = Request.Headers["Accept"];
+
+                var xls = Service.GenerateExcelCustomerByOrder(startOrder, endOrder, orderStatus, totalOrderFrom, totalOrderTo);
+                string filename = String.Format("Customer - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+ 
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+
+        }
         [HttpGet("download")]
         public IActionResult GetXls(string email, string name, string phoneNumber, string dobFrom, string dobTo, string membershipTier)
         {

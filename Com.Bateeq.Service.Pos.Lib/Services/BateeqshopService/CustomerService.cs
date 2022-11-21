@@ -202,6 +202,124 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService
 
            
         }
+        public IQueryable<CustomerByOrderViewModel> ReadCustomerByOrder(string starOrder, string endOrder,string orderState, decimal totalOrderFrom, decimal totalOrderTo)
+        {
+            SqlConnection conn = new SqlConnection("Server=com-bateeqshop-sqlserver.database.windows.net;Database=com-bateeqshop-db-order;User=adminPrd@com-bateeqshop-sqlserver;password=Standar123.;Trusted_Connection=False;MultipleActiveResultSets=true");
+            SqlConnection connCust = new SqlConnection("Server=com-bateeqefrata-sqlserver.database.windows.net;Database=com-bateeqshop-db-auth;User=adminPrd@com-bateeqefrata-sqlserver;password=Standar123.;Trusted_Connection=False;MultipleActiveResultSets=true");
+            connCust.Open();
+            conn.Open();
+            string _startOrder = String.IsNullOrEmpty(starOrder) ? DateTime.MinValue.Date.ToShortDateString() : Convert.ToDateTime(starOrder).ToShortDateString();
+            string _endOrder = String.IsNullOrEmpty(endOrder) ? DateTime.Now.Date.ToShortDateString() : Convert.ToDateTime(endOrder).ToShortDateString();
+            SqlCommand command = new SqlCommand("SELECT distinct orderNo,userid,o.paymentName,shipmentStatus,total,o.orderStatus,paymentStatus,agent into #temp "+
+                                " FROM[dbo].[Orders] o join OrderDetails d on o.Id = d.OrderId "+
+                                " where o.IsDeleted = 0 and d.IsDeleted = 0 and OrderStatus in ('PENDING', 'FINISHED') and COnvert(date,o.CreatedUtc) between '" + _startOrder + "' and '" + _endOrder + "'  " +
+
+                                " select count(orderno) OrderCount, userId, orderStatus, sum(Total) total from #temp " +
+                                " group by UserId, OrderStatus "+
+                                " drop table #temp", conn);
+
+            List <OrderCountViewModel> orderCountViewModels = new List<OrderCountViewModel>();
+            List<CustomerByOrderViewModel> customerByOrderViewModel = new List<CustomerByOrderViewModel>();
+
+            // int result = command.ExecuteNonQuery();
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+               
+                    OrderCountViewModel order = new OrderCountViewModel
+                    {
+                        userId= Convert.ToInt32(reader["userId"]),
+                        orderCount = Convert.ToInt32(reader["orderCount"]),
+                        orderStatus = reader["orderStatus"].ToString(),
+                        total = Convert.ToDecimal(reader["total"]),
+                        
+                    };
+                    orderCountViewModels.Add(order);
+                }
+            }
+            SqlCommand commandCustomer =  new SqlCommand("SELECT u.id,firstName,lastName ,dbo,email,gender,phoneNumber,totalPoint, mm.Name userMemberships " +
+                                                 "FROM Users   u join UserMemberships m on u.UserMembershipId = m.Id " +
+                                                 "join Memberships mm on mm.Id = m.MembershipId where u.IsDeleted = 0 ", connCust);
+            List<CustomerViewModel> customerViewModels = new List<CustomerViewModel>();
+            // int result = command.ExecuteNonQuery();
+            using (SqlDataReader reader = commandCustomer.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    CustomerViewModel customer = new CustomerViewModel
+                    {
+                        id = Convert.ToInt32(reader["id"]),
+                        firstName = reader["firstName"].ToString(),
+                        lastName = reader["lastName"].ToString(),
+                        dbo = Convert.ToDateTime(reader["dbo"]),
+                        email = reader["email"].ToString(),
+                        gender = reader["gender"].ToString(),
+                        phoneNumber = reader["phoneNumber"].ToString(),
+                        totalPoint = Convert.ToDecimal(reader["totalPoint"]),
+                        userMemberships = reader["userMemberships"].ToString()
+                    };
+                    customerViewModels.Add(customer);
+                }
+            }
+        
+           
+            var query = from a in orderCountViewModels.AsQueryable()
+                        join b in customerViewModels.AsQueryable()
+                        on a.userId equals b.id
+                        where a.orderStatus == orderState  && ( a.total >= totalOrderFrom && a.total <= (totalOrderTo == 0 ? 1000000000 : totalOrderTo))
+                       
+                        select new { a.orderStatus,a.orderCount,a.total,b.lastName,b.firstName,b.email,b.phoneNumber };
+
+            foreach(var item in query)
+            {
+                CustomerByOrderViewModel customerByOrder = new CustomerByOrderViewModel
+                {
+                    name = item.firstName + " " + item.lastName,
+                    email = item.email,
+                    orderTotal=item.total,
+                    phoneNumber = item.phoneNumber,
+                    numberOfOrders = item.orderCount
+                };
+                customerByOrderViewModel.Add(customerByOrder);
+            }
+            conn.Close();
+
+            return customerByOrderViewModel.AsQueryable();
+
+
+        }
+        public MemoryStream GenerateExcelCustomerByOrder(string starOrder, string endOrder, string orderState, decimal totalOrderFrom, decimal totalOrderTo)
+        {
+
+            var Query = ReadCustomerByOrder(starOrder, endOrder, orderState, totalOrderFrom, totalOrderTo);
+
+            DataTable result = new DataTable();
+
+            //result.Columns.Add(new DataColumn());
+            result.Columns.Add(new DataColumn() { ColumnName = "No", DataType = typeof(int) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Name", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Email", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Phone Number", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Order Total", DataType = typeof(decimal) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Number of Orders", DataType = typeof(int) });
+
+
+            if (Query.Count() == 0)
+                result.Rows.Add(0, "", "", "", 0,0);
+            else
+            {
+                int index = 0;
+                foreach (var item in Query)
+                {
+                    index++;
+                    result.Rows.Add(index, item.name, item.email, item.phoneNumber ,item.orderTotal,item.numberOfOrders);
+                }
+            }
+
+            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>> { (new KeyValuePair<DataTable, string>(result, "Customer By Order BateeqShop")) }, true);
+
+        }
         public IQueryable<MembershipViewModel> ReadMembership()
         {
             SqlConnection conn = new SqlConnection("Server=com-bateeqefrata-sqlserver.database.windows.net;Database=com-bateeqshop-db-auth;User=adminPrd@com-bateeqefrata-sqlserver;password=Standar123.;Trusted_Connection=False;MultipleActiveResultSets=true");
