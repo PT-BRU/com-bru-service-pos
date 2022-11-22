@@ -21,6 +21,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Text;
 using Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService;
+using Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService.VoucherServices;
 
 namespace Com.Danliris.Service.Inventory.WebApi
 {
@@ -73,9 +74,10 @@ namespace Com.Danliris.Service.Inventory.WebApi
                 //.AddTransient<IInventoryDocumentService, InventoryDocumentService>()
                 //.AddTransient<IInventoryMovementService, InventoryMovementService>()
                 .AddTransient<ISalesDocReturnService, SalesDocReturnService>()
-                 .AddTransient<ICustomerService, CustomerService>()
+                .AddTransient<ICustomerService, CustomerService>()
                 .AddTransient<ISalesDocService,SalesDocService>()
                 .AddTransient<IDiscountService, DiscountService>()
+                .AddTransient<IVoucherService, VoucherService>()
                 .AddScoped<IIdentityService, IdentityService>()
                 .AddScoped<IValidateService, ValidateService>()
                 .AddScoped<IHttpService, HttpService>()
