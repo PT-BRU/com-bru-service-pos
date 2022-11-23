@@ -33,7 +33,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService.VoucherServices
             string _name = String.IsNullOrEmpty(name) ? "" : name;
             string _code = String.IsNullOrEmpty(code) ? "" : code;
             string _keyword = String.IsNullOrEmpty(keyword) ? "" : keyword;
-            DateTime _dateFrom = startDate==null || startDate.Year==1 ? DateTime.MinValue.Date : startDate;
+            DateTime _dateFrom = startDate == null || startDate.Year == 1 ? DateTime.MinValue.Date : startDate;
             DateTime _dateTo = endDate == null && endDate.Year == 1 ? DateTime.MaxValue.Date : endDate;
             SqlCommand command = new SqlCommand(
                 "	SELECT isnull(q.Id, 0) as VoucherId , isnull(q.code, NULL) as VoucherName, q.Type as vType	" +
@@ -120,9 +120,9 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService.VoucherServices
                 "			  else  productsLastModifiedUtc end ) as ModifiedDate	" +
                 "	  from  #temp a	 " +
                 "	  left join #temp1 b on a.VoucherId= b.VoucherId	", conn);
-                //"where u.IsDeleted = 0 and name like '%" + _name + "%'" +
-                //"and  code like '%" + _code + " %' and type like '%" + _type + " %'" +
-                //" and startDate between '" + _dateFrom + "' and '" + _dateTo + "'  and type like '%" + _type + "%'", conn);
+            //"where u.IsDeleted = 0 and name like '%" + _name + "%'" +
+            //"and  code like '%" + _code + " %' and type like '%" + _type + " %'" +
+            //" and startDate between '" + _dateFrom + "' and '" + _dateTo + "'  and type like '%" + _type + "%'", conn);
             List<VoucherViewModel> viewModels = new List<VoucherViewModel>();
             // int result = command.ExecuteNonQuery();
             using (SqlDataReader reader = command.ExecuteReader())
@@ -139,8 +139,8 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService.VoucherServices
                         TotalUse = Convert.ToInt32(reader["UseCount"]),
                         Status = Convert.ToBoolean(reader["active"]) ? "Not Active" : "Active",
                         ModifiedDate = Convert.ToDateTime(reader["ModifiedDate"]),
-                        DiscountCode= reader["VoucherName"].ToString(),
-                        TypeCode= reader["vType"].ToString(),
+                        DiscountCode = reader["VoucherName"].ToString(),
+                        TypeCode = reader["vType"].ToString(),
                     };
                     viewModels.Add(voucher);
                 }
@@ -171,6 +171,122 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService.VoucherServices
             if (!string.IsNullOrEmpty(_code))
             {
                 data = data.Where(a => a.DiscountCode.Contains(_code));
+            }
+
+            return data.OrderByDescending(a => a.ModifiedDate);
+        }
+
+        public IQueryable<VoucherViewModel> ReadMembership(DateTime startDate, DateTime endDate, string voucherType, string code, string name, string keyword, int membershipId)
+        {
+            SqlConnection conn = new SqlConnection("Server=com-bateeqefrata-sqlserver.database.windows.net;Database=com-bateeqshop-db-voucher;User=adminPrd@com-bateeqefrata-sqlserver;password=Standar123.;Trusted_Connection=False;MultipleActiveResultSets=true");
+            conn.Open();
+            string _type = String.IsNullOrEmpty(voucherType) ? "" : voucherType;
+            string _name = String.IsNullOrEmpty(name) ? "" : name;
+            string _code = String.IsNullOrEmpty(code) ? "" : code;
+            string _keyword = String.IsNullOrEmpty(keyword) ? "" : keyword;
+            int _membershipId = membershipId == 0 ? 0 : membershipId;
+            DateTime _dateFrom = startDate == null || startDate.Year == 1 ? DateTime.MinValue.Date : startDate;
+            DateTime _dateTo = endDate == null && endDate.Year == 1 ? DateTime.MaxValue.Date : endDate;
+            SqlCommand command = new SqlCommand(
+                "	SELECT isnull(q.Id, 0) as VoucherId , isnull(q.code, NULL) as VoucherName, q.Type as vType								" +
+                "		, isnull(nominals.Id, 0) as NId  , isnull(nominals.name, NULL) as nominalsname, isnull(nominals.ExpiredDate, NULL) as nominalsExpDate							" +
+                "		, isnull(nominals.StartDate, NULL) as nominalsStartDate, isnull(nominals.Nominal, NULL) as nominalsNoms, isnull(nominals.LastModifiedUtc, NULL) as nominalsLastModifiedUtc	" +
+                "		, ISNULL(nominals.MembershipId, null) as nominalsMembershipId, ISNULL(nominals.exchangepoint, null) as nominalsEx							" +
+                "									" +
+                "		, isnull(products.Id, 0) as productsId, isnull(products.name, NULL) as productsname, isnull(products.ExpiredDate, NULL) as productsExpDate		" +
+                "		, isnull(products.StartDate, NULL) as productsStartDate, 0 as productsNoms, isnull( products.LastModifiedUtc, NULL) as  productsLastModifiedUtc		" +
+                "		, ISNULL(products.MembershipId, null) as productsMembershipId, ISNULL(products.exchangepoint, null) as productsEx	" +
+                "	into #temp								" +
+                "	FROM [dbo].[Vouchers] q 								" +
+                "	  left join VoucherNominals nominals on q.TypeId= nominals.Id								" +
+                "	  left join VoucherProducts products on q.TypeId= products.Id								" +
+                "	  where q.IsDeleted=0 and q.code is null								" +
+                "	  order by q.LastModifiedUtc desc								" +
+                "									" +
+                "	  SELECT Count(VoucherId) as count, VoucherId 								" +
+                "	  into #temp3								" +
+                "	  FROM [dbo].[UserVouchers] where IsDeleted=0 and IsRedeemed=1  group by VoucherId			" +
+                "									" +
+                "	  SELECT Count(VoucherId) as count, VoucherId 								" +
+                "	  into #temp2								" +
+                "	  FROM [dbo].[UserVouchers] where IsDeleted=0  group by VoucherId								" +
+                "	  select a.voucherId, isnull(b.Count,0) as UseCount,vType, isnull(c.Count,0) as RedeemCount		" +
+                "			, (case when nominalsname is not null and vType=0 then nominalsname						" +
+                "				  else  productsname end ) as name					" +
+                "			,(case when nominalsname is not null and vType=0 then 'nominal'						" +
+                "				  else  'product' end ) as type					" +
+                "			 ,(case when nominalsname is not null and vType=0 then nominalsStartDate						" +
+                "				  else  productsStartDate end ) as startDate					" +
+                "			,(case when nominalsname is not null and vType=0 then nominalsExpDate						" +
+                "				  else  productsStartDate end ) as endDate					" +
+                "			,(case when nominalsname is not null and vType=0 then nominalsNoms						" +
+                "				  else  productsNoms end ) as Nominal					" +
+                "			,(case when nominalsname is not null and vType=0 and	nominalsStartDate	<= GETDATE()	and	nominalsExpDate	>= GETDATE() then 1	" +
+                "				  when productsname is not null and vType=2 and	productsStartDate	<= GETDATE()	and	productsExpDate	>= GETDATE() then 1" +
+                "				  else  0 end ) as active					" +
+                "			,(case when nominalsname is not null and vType=0 then nominalsLastModifiedUtc						" +
+                "				  else  productsLastModifiedUtc end ) as ModifiedDate					" +
+                "			,(case when nominalsname is not null and vType=0 then nominalsEx						" +
+                "				  else  productsEx end ) as ExchangePoint					" +
+                "           , (case when nominalsname is not null and vType = 0 then nominalsMembershipId  " +
+                "                 else  productsMembershipId end) as MembershipId  " +
+                "	  from  #temp a								" +
+                "	  left join #temp3 b on a.VoucherId= b.VoucherId 								" +
+                "	  left join #temp2 c on a.VoucherId= c.VoucherId 								" , conn);
+
+            List <VoucherViewModel> viewModels = new List<VoucherViewModel>();
+            
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    VoucherViewModel voucher = new VoucherViewModel
+                    {
+                        id = Convert.ToInt32(reader["voucherId"]),
+                        DiscountName = reader["name"].ToString(),
+                        DiscountType = reader["type"].ToString(),
+                        StartDate = (Convert.ToDateTime(reader["startDate"])).ToString("yyyy-MM-dd"),
+                        EndDate = (Convert.ToDateTime(reader["endDate"])).ToString("yyyy-MM-dd"),
+                        TotalUse = Convert.ToInt32(reader["UseCount"]),
+                        Status = Convert.ToBoolean(reader["active"]) ? "Not Active" : "Active",
+                        ModifiedDate = Convert.ToDateTime(reader["ModifiedDate"]),
+                        //DiscountCode = reader["VoucherName"].ToString(),
+                        TypeCode = reader["vType"].ToString(),
+                        ExchangePoint= reader["ExchangePoint"].ToString(),
+                        Membership= reader["MembershipId"].ToString(),
+                        Nominal= reader["Nominal"].ToString(),
+                        TotalClaimed = Convert.ToInt32(reader["RedeemCount"]),
+                        
+                    };
+                    viewModels.Add(voucher);
+                }
+            }
+            conn.Close();
+
+            var data = viewModels.AsQueryable();
+            if (!string.IsNullOrEmpty(_keyword))
+            {
+                data = data.Where(a => a.DiscountName.Contains(_keyword) || a.DiscountType.Contains(_keyword));
+            }
+            if (_dateFrom.Year > 1)
+            {
+                data = data.Where(a => Convert.ToDateTime(a.StartDate) >= _dateFrom);
+            }
+            if (!string.IsNullOrEmpty(_name))
+            {
+                data = data.Where(a => a.DiscountName.Contains(_name));
+            }
+            if (_dateTo.Year > 1)
+            {
+                data = data.Where(a => Convert.ToDateTime(a.EndDate) <= _dateTo);
+            }
+            if (!string.IsNullOrEmpty(_type))
+            {
+                data = data.Where(a => a.TypeCode.Contains(_type));
+            }
+            if (_membershipId>0)
+            {
+                data = data.Where(s => s.Membership.Contains(membershipId.ToString()));
             }
 
             return data.OrderByDescending(a => a.ModifiedDate);

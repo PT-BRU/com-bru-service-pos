@@ -9,5 +9,6 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService.VoucherServices
     public interface IVoucherService
     {
         IQueryable<VoucherViewModel> Read(DateTime startDate, DateTime endDate, string voucherType, string code, string name, string keyword);
+        IQueryable<VoucherViewModel> ReadMembership(DateTime startDate, DateTime endDate, string voucherType, string code, string name, string keyword, int membershipId);
     }
 }
