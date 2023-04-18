@@ -1217,8 +1217,8 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
             if (storageId != "0")
             {
                 SqlCommand command = new SqlCommand(
-               "select s._CreatedUtc,Code,Date,SubTotal,Discount,GrandTotal,StoreCode,StoreName,ItemCode,ItemName,ItemArticleRealizationOrder,Quantity,Price,Discount1,Discount2,DiscountNominal,Margin,SpesialDiscount,Total,s.isReturn,Remark,PaymentType,	BankName,Card " +
-               "from SalesDocs s join SalesDocDetails d on s.Id= d.SalesDocId where   s._IsDeleted=0 and d._IsDeleted=0 and (CONVERT(Date, [Date]) between '" + dateFrom.Date + "' and '" + _dateTo.Date + "'  ) and Storageid= " + storageId, conn);
+               "select s._CreatedUtc,Code,Date,SubTotal,Discount,GrandTotal,StoreCode,StoreName,ItemCode,ItemName,ItemArticleRealizationOrder,Quantity,Price,Discount1,Discount2,DiscountNominal,Margin,SpesialDiscount as sp,Total,s.isReturn,Remark,PaymentType,	BankName,Card " +
+               "from SalesDocs s join SalesDocDetails d on s.Id= d.SalesDocId where   s._IsDeleted=0 and d._IsDeleted=0 and (CONVERT(Date, [Date]) between '" + dateFrom.Date + "' and '" + _dateTo.Date + "'  ) and StoreId= " + storageId, conn);
                 List<SalesReportViewModel> dataList = new List<SalesReportViewModel>();
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
@@ -1248,7 +1248,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
                              Margin = Convert.ToDouble(reader["Margin"]),
                              PaymentType = reader["PaymentType"].ToString(),
                              Remark = reader["Remark"].ToString(),
-                             SpecialDiscount = Convert.ToDouble(reader["SpecialDiscount"]),
+                             SpecialDiscount = Convert.ToInt32(reader["sp"].ToString()),
                              _CreatedUtc= reader["_CreatedUtc"].ToString(),
                              IsReturn = Convert.ToBoolean(reader["isReturn"]) == true ? "Diretur" :"Tidak"
 
@@ -1262,7 +1262,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
             else
             {
                 SqlCommand command = new SqlCommand(
-             "select s._CreatedUtc,Code,Date,SubTotal,Discount,GrandTotal,StoreCode,StoreName,ItemCode,ItemName,ItemArticleRealizationOrder,Quantity,Price,Discount1,Discount2,DiscountNominal,Margin,SpesialDiscount,Total,s.isReturn,Remark,PaymentType,	BankName,Card " +
+             "select s._CreatedUtc,Code,Date,SubTotal,Discount,GrandTotal,StoreCode,StoreName,ItemCode,ItemName,ItemArticleRealizationOrder,Quantity,Price,Discount1,Discount2,DiscountNominal,Margin,SpesialDiscount as sp,Total,s.isReturn,Remark,PaymentType,	BankName,Card " +
                "from SalesDocs s join SalesDocDetails d on s.Id= d.SalesDocId where   s._IsDeleted=0 and d._IsDeleted=0  and (CONVERT(Date, [Date]) between '" + dateFrom.Date + "' and '" + _dateTo.Date + "'  )", conn);
                 List<SalesReportViewModel> dataList = new List<SalesReportViewModel>();
                 using (SqlDataReader reader = command.ExecuteReader())
@@ -1293,7 +1293,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
                             Margin = Convert.ToDouble(reader["Margin"]),
                             PaymentType = reader["PaymentType"].ToString(),
                             Remark = reader["Remark"].ToString(),
-                            SpecialDiscount = Convert.ToDouble(reader["SpesialDiscount"]),
+                            SpecialDiscount = Convert.ToInt32(reader["sp"].ToString()),
                             _CreatedUtc = reader["_CreatedUtc"].ToString(),
                             IsReturn = Convert.ToBoolean(reader["isReturn"]) == true ? "Diretur" : ""
                         };

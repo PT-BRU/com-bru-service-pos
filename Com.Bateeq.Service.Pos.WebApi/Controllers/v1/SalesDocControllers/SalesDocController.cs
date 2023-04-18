@@ -339,7 +339,7 @@ namespace Com.Bateeq.Service.Pos.WebApi.Controllers.v1.SalesDocControllers
             }
         }
         [HttpGet("monitoring/get-sales-all/download")]
-        public IActionResult GetSalesllXls(string storageId, DateTime dateFrom, DateTime dateTo)
+        public IActionResult GetSaleslXls(string storageId, DateTime dateFrom, DateTime dateTo)
         {
             try
             {
