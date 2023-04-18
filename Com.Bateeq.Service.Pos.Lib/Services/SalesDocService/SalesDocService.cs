@@ -23,6 +23,9 @@ using System.Data;
 using System.IO;
 using System.Globalization;
 using Com.Bateeq.Service.Pos.Lib.ViewModels;
+using System.Data.SqlClient;
+using OfficeOpenXml;
+using Microsoft.Extensions.Configuration;
 
 namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
 {
