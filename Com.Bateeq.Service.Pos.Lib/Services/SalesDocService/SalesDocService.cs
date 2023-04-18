@@ -1204,7 +1204,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
         public IQueryable<SalesReportViewModel> GetSalesAllQuery(string storageId, DateTime dateFrom, DateTime dateTo)
         {
             DateTime _dateTo = dateTo == new DateTime(0001, 1, 1) ? DateTime.Now : dateTo;
-            DateTime _dateFrom = dateFrom == new DateTime(0001, 1, 1) ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : dateTo;
+            DateTime _dateFrom = dateFrom == new DateTime(0001, 1, 1) ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : dateFrom;
             //var builder = new ConfigurationBuilder()
             //              .SetBasePath(Directory.GetCurrentDirectory())
             //              .AddJsonFile("appSettings.json", optional: true, reloadOnChange: true);
