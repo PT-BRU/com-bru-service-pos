@@ -38,6 +38,8 @@ namespace Com.Bateeq.Service.Pos.Test.DataUtil.SalesDocDataUtils
                 BankCode = "BankCode",
                 StoreName= "name",
                 Card="card",
+                
+                _CreatedUtc= DateTime.Now,
                 Details = new List<SalesDocDetail>()
                 {
                     new SalesDocDetail()
@@ -47,7 +49,8 @@ namespace Com.Bateeq.Service.Pos.Test.DataUtil.SalesDocDataUtils
                         isReturn=false,
                         ItemName="name",
                         ItemDomesticCOGS=1,
-                        ItemArticleRealizationOrder="a"
+                        ItemArticleRealizationOrder="a",
+                        SpesialDiscount =0
                     },
 
                 }
