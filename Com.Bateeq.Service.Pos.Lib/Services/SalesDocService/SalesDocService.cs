@@ -1204,7 +1204,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
         public IQueryable<SalesReportViewModel> GetSalesAllQuery(string storageId, DateTime dateFrom, DateTime dateTo)
         {
             DateTime _dateTo = dateTo == new DateTime(0001, 1, 1) ? DateTime.Now : dateTo;
-            DateTime _dateFrom = dateFrom == new DateTime(0001, 1, 1) ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : dateFrom;
+            //DateTime _dateFrom = dateFrom == new DateTime(0001, 1, 1) ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : dateFrom;
             //var builder = new ConfigurationBuilder()
             //              .SetBasePath(Directory.GetCurrentDirectory())
             //              .AddJsonFile("appSettings.json", optional: true, reloadOnChange: true);
@@ -1359,7 +1359,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
                 string tglawal = dateFrom.ToString("dd MMM yyyy", new CultureInfo("id-ID"));
                 string tglakhir = dateTo.ToString("dd MMM yyyy", new CultureInfo("id-ID"));
 
-                sheet.Cells[$"A1:{col}1"].Value = string.Format("LAPORAN INVENTORI BARANG");
+                sheet.Cells[$"A1:{col}1"].Value = string.Format("LAPORAN PENJUALAN BARANG");
                 sheet.Cells[$"A1:{col}1"].Merge = true;
                 sheet.Cells[$"A1:{col}1"].Style.Font.Size = 15;
                 sheet.Cells[$"A1:{col}1"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
