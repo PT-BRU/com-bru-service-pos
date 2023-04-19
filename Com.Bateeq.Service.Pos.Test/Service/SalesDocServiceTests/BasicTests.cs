@@ -451,7 +451,7 @@ namespace Com.Bateeq.Service.Pos.Test.Service.SalesDocServiceTests
 		{
 			var service = new SalesDocService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 			var data = await _dataUtil(service).GetTestData();
-			var Response = service.GetSalesAll(data.StoreId.ToString(), DateTime.Now.AddDays(-1), DateTime.Now);
+			var Response = service.GetSalesAll(data.StoreId.ToString(), DateTime.Now.AddDays(-2), DateTime.Now.AddDays(2));
 			Assert.NotEmpty(Response.Item1);
 
 		 
@@ -466,6 +466,18 @@ namespace Com.Bateeq.Service.Pos.Test.Service.SalesDocServiceTests
 
 
 		}
+		[Fact]
+		public async void Should_Success_Get_ExcelReportSalesAll()
+		{
+			var service = new SalesDocService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+			var data = await _dataUtil(service).GetTestData();
+			var Response = service.GenerateExcelReportSalesAll("0", DateTime.Now.AddDays(-1), DateTime.Now);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Response.GetType().GetProperty("ContentType").GetValue(Response, null));
+
+
+
+		}
+
 
 	}
 }
