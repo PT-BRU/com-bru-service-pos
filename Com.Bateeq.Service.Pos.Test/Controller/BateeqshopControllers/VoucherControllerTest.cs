@@ -114,5 +114,27 @@ namespace Com.Bateeq.Service.Pos.Test.Controller.BateeqshopControllers
             int statusCode = this.GetStatusCode(response);
             Assert.NotEqual((int)HttpStatusCode.NotFound, statusCode);
         }
+
+        [Fact]
+        public void GetMembership()
+        {
+            //Setup
+            PosDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+            Mock<IServiceProvider> serviceProvider = GetServiceProvider();
+            var validateService = new Mock<IValidateService>();
+            Mock<IIdentityService> identityService = new Mock<IIdentityService>();
+
+            VoucherService service = new VoucherService(serviceProvider.Object, _dbContext("test"));
+
+            serviceProvider.Setup(s => s.GetService(typeof(VoucherService))).Returns(service);
+            serviceProvider.Setup(s => s.GetService(typeof(PosDbContext))).Returns(dbContext);
+
+
+            //Act
+            IActionResult response = GetController(identityService.Object, validateService.Object, service).GetVoucherMembership(DateTime.Now, DateTime.Now, "", "", "", "",0);
+
+            int statusCode = this.GetStatusCode(response);
+            Assert.NotEqual((int)HttpStatusCode.NotFound, statusCode);
+        }
     }
 }
