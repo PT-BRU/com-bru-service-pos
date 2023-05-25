@@ -40,7 +40,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService
             SqlCommand command = new SqlCommand("SELECT u.id,firstName,lastName ,dbo,email,gender,phoneNumber,totalPoint, mm.Name userMemberships "  + 
                                                  "FROM Users   u join UserMemberships m on u.UserMembershipId = m.Id " +
                                                  "join Memberships mm on mm.Id = m.MembershipId where u.IsDeleted = 0 and email like '%"+ _email +
-                                                 "%' and (firstName like '%" + _name + "%' or lastName like '%" + _name + "%') and phoneNumber like '%" + _phoneNumber +
+                                                 "%'  and phoneNumber like '%" + _phoneNumber +
                                                  "%' and dbo between '" + _dobFrom + "' and '" +  _dobTo + "'  and mm.Name like '%" + _membershipTier +"%'", conn);
             List <CustomerViewModel> viewModels = new List<CustomerViewModel>();
             // int result = command.ExecuteNonQuery();
@@ -53,6 +53,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService
                         id= Convert.ToInt32(reader["id"]),
                         firstName = reader["firstName"].ToString(),
                         lastName = reader["lastName"].ToString(),
+                        fullName = reader["firstName"].ToString() + " " + reader["lastName"].ToString(),
                         dbo = Convert.ToDateTime(reader["dbo"]),
                         email = reader["email"].ToString(),
                         gender = reader["gender"].ToString(),
@@ -63,9 +64,12 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService
                     viewModels.Add(customer);
                 }
             }
+            var query = from a in viewModels.AsQueryable()
+                        where a.fullName.Contains(_name)
+                        select a;
             conn.Close();
 
-            return viewModels.AsQueryable();
+            return query.AsQueryable();
 
            
         }
