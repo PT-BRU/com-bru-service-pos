@@ -86,5 +86,15 @@ namespace Com.Bateeq.Service.Pos.Test.Service.BateeqshopServiceTests
             Assert.NotNull(Response);
 
         }
+
+        [Fact]
+        public async void Should_Success_ReadMembership()
+        {
+            var service = new VoucherService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var Response = service.ReadMembership(DateTime.Now, DateTime.Now, "a", "a", "a", "a",1);
+            Assert.NotNull(Response);
+
+        }
     }
 }
