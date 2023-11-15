@@ -446,5 +446,26 @@ namespace Com.Bateeq.Service.Pos.Test.Service.SalesDocServiceTests
 			Assert.NotNull(Response);
 		}
 
+		[Fact]
+		public async void Should_Success_Get_ReportSales()
+		{
+			var service = new SalesDocService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+			var data = await _dataUtil(service).GetTestData();
+			var Response = service.GetSalesAll(data.StoreId.ToString(), DateTime.Now.AddDays(-1), DateTime.Now);
+			Assert.NotEmpty(Response.Item1);
+
+		 
+		}
+		[Fact]
+		public async void Should_Success_Get_ReportSalesAll()
+		{
+			var service = new SalesDocService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+			var data = await _dataUtil(service).GetTestData();
+			var Response = service.GetSalesAll("0", DateTime.Now.AddDays(-1), DateTime.Now);
+			Assert.NotEmpty(Response.Item1);
+
+
+		}
+
 	}
 }
