@@ -1262,7 +1262,7 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
 
             if (storageId != "0")
             {
-                query += " and StoreId= " + storageId ;
+                query += " and StoreStorageId= " + storageId ;
             }
 
             SqlCommand command = new SqlCommand(query,conn);
