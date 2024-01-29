@@ -22,6 +22,7 @@ using System;
 using System.Text;
 using Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService;
 using Com.Bateeq.Service.Pos.Lib.Services.BateeqshopService.VoucherServices;
+using Com.Bateeq.Service.Pos.Lib;
 
 namespace Com.Danliris.Service.Inventory.WebApi
 {
@@ -92,7 +93,11 @@ namespace Com.Danliris.Service.Inventory.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Configuration["DefaultConnection"];
+            string coreConnectionString = Configuration.GetConnectionString("CoreDbConnection") ?? Configuration["CoreDbConnection"];
+            string posConnectionString = Configuration.GetConnectionString("PosDbConnection") ?? Configuration["PosDbConnection"];
 
+            APIEndpoint.CoreConnectionString = Configuration.GetConnectionString("CoreDbConnection") ?? Configuration["CoreDbConnection"];
+            APIEndpoint.PosConnectionString = Configuration.GetConnectionString("PosDbConnection") ?? Configuration["PosDbConnection"];
             services
                 .AddDbContext<PosDbContext>(options => options.UseSqlServer(connectionString))
                 .AddApiVersioning(options =>
@@ -101,7 +106,8 @@ namespace Com.Danliris.Service.Inventory.WebApi
                     options.AssumeDefaultVersionWhenUnspecified = true;
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 });
-
+            services.AddTransient<IOtherDbConnectionDBContext>(s => new OtherDbConnectionDBContext(coreConnectionString));
+            services.AddTransient<IOtherDbConnectionDBContext>(s => new OtherDbConnectionDBContext(posConnectionString));
             //services.Configure<MongoDbSettings>(options =>
             //    {
             //        options.ConnectionString = Configuration.GetConnectionString("MongoConnection") ?? Configuration["MongoConnection"];
