@@ -1250,11 +1250,11 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
         {
             DateTime _dateTo = dateTo == new DateTime(0001, 1, 1) ? DateTime.Now : dateTo;
             
-            string posConnString = APIEndpoint.PosConnectionString;
             List<string> itemcodes = new List<string>();
             List<SalesReportViewModel> dataList = new List<SalesReportViewModel>();
             List<SalesReportViewModel> reportData = new List<SalesReportViewModel>();
 
+            string posConnString = APIEndpoint.DefaultConnectionString;
             using (SqlConnection conn = new SqlConnection(posConnString))
             {
                 conn.Open();

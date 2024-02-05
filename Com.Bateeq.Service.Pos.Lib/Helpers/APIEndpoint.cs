@@ -12,6 +12,6 @@ namespace Com.Danliris.Service.Inventory.Lib.Helpers
         public static string Purchasing { get; set; }
         public static string Sales { get; set; }
         public static string CoreConnectionString { get; set; }
-        public static string PosConnectionString { get; set; }
+        public static string DefaultConnectionString { get; set; }
     }
 }
