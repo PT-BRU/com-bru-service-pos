@@ -94,10 +94,9 @@ namespace Com.Danliris.Service.Inventory.WebApi
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Configuration["DefaultConnection"];
             string coreConnectionString = Configuration.GetConnectionString("CoreDbConnection") ?? Configuration["CoreDbConnection"];
-            string posConnectionString = Configuration.GetConnectionString("PosDbConnection") ?? Configuration["PosDbConnection"];
 
             APIEndpoint.CoreConnectionString = Configuration.GetConnectionString("CoreDbConnection") ?? Configuration["CoreDbConnection"];
-            APIEndpoint.PosConnectionString = Configuration.GetConnectionString("PosDbConnection") ?? Configuration["PosDbConnection"];
+            APIEndpoint.DefaultConnectionString = Configuration.GetConnectionString("DefaultConnection") ?? Configuration["DefaultConnection"];
             services
                 .AddDbContext<PosDbContext>(options => options.UseSqlServer(connectionString))
                 .AddApiVersioning(options =>
@@ -107,7 +106,7 @@ namespace Com.Danliris.Service.Inventory.WebApi
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 });
             services.AddTransient<IOtherDbConnectionDBContext>(s => new OtherDbConnectionDBContext(coreConnectionString));
-            services.AddTransient<IOtherDbConnectionDBContext>(s => new OtherDbConnectionDBContext(posConnectionString));
+            services.AddTransient<IOtherDbConnectionDBContext>(s => new OtherDbConnectionDBContext(coreConnectionString));
             //services.Configure<MongoDbSettings>(options =>
             //    {
             //        options.ConnectionString = Configuration.GetConnectionString("MongoConnection") ?? Configuration["MongoConnection"];
