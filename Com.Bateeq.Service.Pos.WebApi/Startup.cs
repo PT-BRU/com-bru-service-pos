@@ -106,7 +106,6 @@ namespace Com.Danliris.Service.Inventory.WebApi
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 });
             services.AddTransient<IOtherDbConnectionDBContext>(s => new OtherDbConnectionDBContext(coreConnectionString));
-            services.AddTransient<IOtherDbConnectionDBContext>(s => new OtherDbConnectionDBContext(coreConnectionString));
             //services.Configure<MongoDbSettings>(options =>
             //    {
             //        options.ConnectionString = Configuration.GetConnectionString("MongoConnection") ?? Configuration["MongoConnection"];

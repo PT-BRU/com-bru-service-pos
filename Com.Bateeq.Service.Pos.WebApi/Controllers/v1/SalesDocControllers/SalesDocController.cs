@@ -345,7 +345,7 @@ namespace Com.Bateeq.Service.Pos.WebApi.Controllers.v1.SalesDocControllers
             {
                 byte[] xlsInBytes;
                 string filename;
-                if (storage == null) { storage = "0"; }
+                if (storageId == null) { storageId = "0"; }
 
                 var xls = Service.GenerateExcelReportSalesAll(storageId, dateFrom, dateTo, group, category, style, collection, season, color, sizes);
                 filename = String.Format("Report Inventori - {0}.xlsx", dateFrom.ToString("MM-yyyy") + "-" + dateTo.ToString("MM-yyyy"));
