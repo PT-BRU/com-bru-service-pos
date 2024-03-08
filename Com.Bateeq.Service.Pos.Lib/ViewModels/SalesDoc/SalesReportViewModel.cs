@@ -32,6 +32,7 @@ namespace Com.Bateeq.Service.Pos.Lib.ViewModels.SalesDoc
         public double Margin { get; set; }
         public string Style { get; set; }
         public string Group { get; set; }
+        public string TransactionNo { get; set; }
 
 
     }
