@@ -5,6 +5,7 @@ using Com.Bateeq.Service.Pos.Lib.Models.SalesDoc;
 
 using Com.Moonlay.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Com.Bateeq.Service.Pos.Lib.Models.SalesReport;
 
 namespace Com.Danliris.Service.Inventory.Lib
 {
@@ -23,6 +24,7 @@ namespace Com.Danliris.Service.Inventory.Lib
         public DbSet<SalesDocReturn> SalesDocReturns { get; set; }
         public DbSet<SalesDocReturnDetail> SalesDocReturnDetails { get; set; }
         public DbSet<SalesDocDetailReturnItem> SalesDocDetailReturnItems { get; set; }
+        public DbSet<SalesReport> SalesReports { get; set; }
         //public DbSet<FPReturnInvToPurchasing> FPReturnInvToPurchasings { get; set; }
         //public DbSet<FPReturnInvToPurchasingDetail> FPReturnInvToPurchasingDetails { get; set; }
 
