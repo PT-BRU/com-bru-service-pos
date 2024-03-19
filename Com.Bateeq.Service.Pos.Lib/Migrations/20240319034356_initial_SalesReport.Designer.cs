@@ -4,14 +4,16 @@ using Com.Danliris.Service.Inventory.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Bateeq.Service.Pos.Lib.Migrations
 {
     [DbContext(typeof(PosDbContext))]
-    partial class PosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240319034356_initial_SalesReport")]
+    partial class initial_SalesReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -663,120 +665,6 @@ namespace Com.Bateeq.Service.Pos.Lib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SalesDocDetailReturnItems");
-                });
-
-            modelBuilder.Entity("Com.Bateeq.Service.Pos.Lib.Models.SalesReport.SalesReport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("Brand")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Category")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("Collection")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("Color")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("Date")
-                        .HasMaxLength(255);
-
-                    b.Property<double>("Discount1");
-
-                    b.Property<double>("Discount2");
-
-                    b.Property<double>("DiscountNominal");
-
-                    b.Property<double>("Gross");
-
-                    b.Property<string>("Group")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("ItemArticleRealizationOrder")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("ItemCode")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("ItemName")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("Location")
-                        .HasMaxLength(255);
-
-                    b.Property<double>("Margin");
-
-                    b.Property<double>("Nett");
-
-                    b.Property<double>("OriginalCost");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<string>("SeasonCode")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("SeasonYear")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("Size")
-                        .HasMaxLength(255);
-
-                    b.Property<double>("SpecialDiscount");
-
-                    b.Property<string>("Style")
-                        .HasMaxLength(255);
-
-                    b.Property<double>("TotalGross");
-
-                    b.Property<double>("TotalNett");
-
-                    b.Property<double>("TotalOriCost");
-
-                    b.Property<string>("TransactionNo")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("_CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("_CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("_CreatedUtc");
-
-                    b.Property<string>("_DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("_DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("_DeletedUtc");
-
-                    b.Property<bool>("_IsDeleted");
-
-                    b.Property<string>("_LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("_LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("_LastModifiedUtc");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SalesReports");
                 });
 
             modelBuilder.Entity("Com.Bateeq.Service.Pos.Lib.Models.SalesReturn.SalesDocReturn", b =>

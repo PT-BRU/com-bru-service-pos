@@ -646,7 +646,7 @@ namespace Com.Bateeq.Service.Pos.Test.Controller.SalesDocControllerTests
                 .Setup(s => s.GetByRO(It.IsAny<string>()))
                 .Returns(new List<SalesDocByRoViewModel>());
             //Act
-            IActionResult response = GetController(identityService.Object, validateService.Object, serviceMock.Object).GetSalesAll(It.IsAny<string>(),It.IsAny<DateTime>(), It.IsAny<DateTime>(),"",1,25,"{}");
+            IActionResult response = GetController(identityService.Object, validateService.Object, serviceMock.Object).GetSalesAll(It.IsAny<string>(),It.IsAny<DateTime>(), It.IsAny<DateTime>(),"","","","","","","","",1,25,"{}");
 
 
             //Assert
@@ -673,7 +673,7 @@ namespace Com.Bateeq.Service.Pos.Test.Controller.SalesDocControllerTests
                 .Setup(s => s.GetByRO(It.IsAny<string>()))
                 .Returns(new List<SalesDocByRoViewModel>());
             //Act
-            IActionResult response = GetController(identityService.Object, validateService.Object, serviceMock.Object).GetSaleslXls(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
+            IActionResult response = GetController(identityService.Object, validateService.Object, serviceMock.Object).GetSaleslXls(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(),"", "", "", "","","","");
 
 
             //Assert
