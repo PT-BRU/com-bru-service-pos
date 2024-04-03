@@ -1400,6 +1400,70 @@ namespace Com.Bateeq.Service.Pos.Lib.Services.SalesDocService
                               TransactionNo=a.TransactionNo
                           }).ToList();
 
+            List<SalesReportViewModel> dataOld = new List<SalesReportViewModel>();
+            if (dateFrom.Date < new DateTime(2023, 1, 1))
+            {
+                using (SqlConnection conn = new SqlConnection(posConnString))
+                {
+                    conn.Open();
+
+                    string oldDataQuery = "SELECT *  FROM [dbo].[SalesReports] ";
+                    //    "WHERE _IsDeleted = 0 " +
+                    //"and (CONVERT(Date, [Date]) between '" + dateFrom.Date + "' and '" + _dateTo.Date + "' )";
+                    
+
+                    //if (storageId != "0")
+                    //{
+                    //    var SizeFilter = dataItem.First().Size;
+                    //    oldDataQuery += " and [Size]= " + SizeFilter;
+                    //    oldDataQuery += " and StoreStorageId= " + storageId;
+                    //}
+
+                    SqlCommand command2 = new SqlCommand(oldDataQuery, conn);
+                    using (SqlDataReader reader = command2.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // var date = Convert.ToDateTime(reader["Date"].ToString());
+                            SalesReportViewModel data = new SalesReportViewModel
+                            {
+                                Brand = "BATEEQ",
+                                Date = reader["Date"].ToString(),
+                                ItemCode = reader["ItemCode"].ToString(),
+                                Location = reader["Location"].ToString(),
+                                SpecialDiscount = Convert.ToDouble(reader["SpesialDiscount"]),
+                                Discount1 = Convert.ToDouble(reader["Discount1"]),
+                                Discount2 = Convert.ToDouble(reader["Discount2"]),
+                                DiscountNominal = Convert.ToDouble(reader["DiscountNominal"]),
+                                Quantity = Convert.ToDouble(reader["Quantity"]),
+                                Margin = Convert.ToDouble(reader["Margin"]),
+                                TotalNett = Convert.ToDouble(reader["TotalNet"]),
+                                TransactionNo = reader["TransactionNo"].ToString(),
+                                Collection = reader["Collection"].ToString(),
+                                Category = reader["Category"].ToString(),
+                                Color = reader["Color"].ToString(),
+                                Gross = Convert.ToDouble(reader["TotalNet"]),
+                                Group = reader["TransactionNo"].ToString(),
+                                ItemArticleRealizationOrder = reader["TransactionNo"].ToString(),
+                                ItemName = reader["TransactionNo"].ToString(),
+                                Nett = Convert.ToDouble(reader["TotalNet"]),
+                                OriginalCost = Convert.ToDouble(reader["TotalNet"]),
+                                SeasonCode = reader["TransactionNo"].ToString(),
+                                SeasonYear = reader["TransactionNo"].ToString(),
+                                Size = reader["TransactionNo"].ToString(),
+                                Style = reader["TransactionNo"].ToString(),
+                                TotalGross = Convert.ToDouble(reader["TotalNet"]),
+                                TotalOriCost = Convert.ToDouble(reader["TotalNet"])
+                            };
+                            dataOld.Add(data);
+                        }
+                    }
+                    conn.Close();
+
+                    reportData = reportData.Union(dataOld).ToList();
+                }
+            }
+
             return reportData.AsQueryable().OrderBy(a => a.Date).ThenBy(a => a.ItemCode);
 
         }
